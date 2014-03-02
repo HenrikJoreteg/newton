@@ -3,15 +3,15 @@
     function AngleConstraint(p1, axis, p2, stiffness, angle) {
         return this instanceof AngleConstraint ? (this.axis = axis, this.p1 = p1, this.p2 = p2, 
         this.angle = "undefined" == typeof angle ? this.getAngle() : angle, this.stiffness = stiffness || 1, 
-        this.isDestroyed = !1, void 0) : new AngleConstraint(p1, axis, p2, stiffness, angle);
+        void (this.isDestroyed = !1)) : new AngleConstraint(p1, axis, p2, stiffness, angle);
     }
-    Math.PI, 2 * Math.PI, AngleConstraint.prototype.category = "angular", AngleConstraint.prototype.priority = 6, 
+    Math.PI, 2 * Math.PI;
+    AngleConstraint.prototype.category = "angular", AngleConstraint.prototype.priority = 6, 
     AngleConstraint.prototype.getAngle = function() {
         var p1 = this.p1.position.pool().sub(this.axis.position), p2 = this.p2.position.pool().sub(this.axis.position), angle = p1.getAngleTo(p2);
         return p1.free(), p2.free(), angle;
     }, AngleConstraint.prototype.resolve = function() {
-        if (this.p1.isDestroyed || this.p2.isDestroyed || this.axis.isDestroyed) return this.isDestroyed = !0, 
-        void 0;
+        if (this.p1.isDestroyed || this.p2.isDestroyed || this.axis.isDestroyed) return void (this.isDestroyed = !0);
         var diff = this.angle - this.getAngle();
         diff <= -Math.PI ? diff += 2 * Math.PI : diff >= Math.PI && (diff -= 2 * Math.PI), 
         diff *= -.25 * this.stiffness, this.p1.pinned || this.p1.position.rotateAbout(this.axis.position, diff), 
@@ -22,7 +22,7 @@
     "use strict";
     function BoxConstraint(left, top, right, bottom, particles) {
         return this instanceof BoxConstraint ? (this.rect = Newton.Rectangle(left, top, right, bottom), 
-        this.particles = particles, void 0) : new BoxConstraint(left, top, right, bottom, particles);
+        void (this.particles = particles)) : new BoxConstraint(left, top, right, bottom, particles);
     }
     BoxConstraint.prototype.category = "boxconstraint", BoxConstraint.prototype.priority = 0, 
     BoxConstraint.prototype.addTo = function(simulator) {
@@ -35,13 +35,13 @@
     function DistanceConstraint(p1, p2, stiffness, distance) {
         return this instanceof DistanceConstraint ? (this.p1 = p1, this.p2 = p2, this.stiffness = stiffness || 1, 
         this.distance = "undefined" == typeof distance ? this.getDistance() : distance, 
-        this.isDestroyed = !1, void 0) : new DistanceConstraint(p1, p2, stiffness, distance);
+        void (this.isDestroyed = !1)) : new DistanceConstraint(p1, p2, stiffness, distance);
     }
     DistanceConstraint.prototype.category = "linear", DistanceConstraint.prototype.priority = 4, 
     DistanceConstraint.prototype.getDistance = function() {
         return Newton.Vector.getDistance(this.p1.position, this.p2.position);
     }, DistanceConstraint.prototype.resolve = function() {
-        if (this.p1.isDestroyed || this.p2.isDestroyed) return this.isDestroyed = !0, void 0;
+        if (this.p1.isDestroyed || this.p2.isDestroyed) return void (this.isDestroyed = !0);
         var pos1 = this.p1.position, pos2 = this.p2.position, delta = pos2.pool().sub(pos1), length = delta.getLength(), invmass1 = 1 / this.p1.getMass(), invmass2 = 1 / this.p2.getMass(), factor = (length - this.distance) / (length * (invmass1 + invmass2)) * this.stiffness, correction1 = delta.pool().scale(factor * invmass1), correction2 = delta.scale(-factor * invmass2);
         this.p1.correct(correction1), this.p2.correct(correction2), delta.free(), correction1.free();
     }, DistanceConstraint.prototype.getCoords = function() {
@@ -55,8 +55,7 @@
 }("undefined" == typeof exports ? this.Newton = this.Newton || {} : exports), function(Newton) {
     "use strict";
     function RigidConstraint(particles, iterations) {
-        return this instanceof RigidConstraint ? (this.particles = particles, this.deltas = this.getDeltas(), 
-        void 0) : new RigidConstraint(particles, iterations);
+        return this instanceof RigidConstraint ? (this.particles = particles, void (this.deltas = this.getDeltas())) : new RigidConstraint(particles, iterations);
     }
     RigidConstraint.prototype.category = "", RigidConstraint.prototype.priority = 2, 
     RigidConstraint.prototype.getCenterMass = function() {
@@ -82,7 +81,7 @@
     }
     function WrapConstraint(left, top, right, bottom, particles) {
         return this instanceof WrapConstraint ? (this.rect = Newton.Rectangle(left, top, right, bottom), 
-        this.particles = particles, this.layer = void 0, void 0) : new WrapConstraint(left, top, right, bottom, particles);
+        this.particles = particles, void (this.layer = void 0)) : new WrapConstraint(left, top, right, bottom, particles);
     }
     WrapConstraint.prototype.category = "WrapConstraint", WrapConstraint.prototype.priority = 0, 
     WrapConstraint.prototype.addTo = function(simulator, layer) {
@@ -99,8 +98,7 @@
     "use strict";
     function Body(material) {
         return this instanceof Body ? (this.particles = [], this.edges = [], this.constraints = [], 
-        this.material = material, this.simulator = void 0, this.layer = void 0, this.isFree = !1, 
-        void 0) : new Body(material);
+        this.material = material, this.simulator = void 0, this.layer = void 0, void (this.isFree = !1)) : new Body(material);
     }
     Body.prototype.addTo = function(simulator, layer) {
         if (this.simulator) throw new Error("Not implemented: reparenting a body");
@@ -137,8 +135,7 @@
     "use strict";
     function Edge(p1, p2, material) {
         return this instanceof Edge ? (this.p1 = p1, this.p2 = p2, this.material = material || Newton.Material.simple, 
-        this.compute(), this._rect = new Newton.Rectangle(0, 0, 0, 0), this.layer = void 0, 
-        void 0) : new Edge(p1, p2, material);
+        this.compute(), this._rect = new Newton.Rectangle(0, 0, 0, 0), void (this.layer = void 0)) : new Edge(p1, p2, material);
     }
     Edge.COLLISION_TOLERANCE = .5, Edge.getAbc = function(x1, y1, x2, y2) {
         var a = y2 - y1, b = x1 - x2, c = a * x1 + b * y1;
@@ -200,9 +197,8 @@
     }
     var lastTime = 0;
     if ("undefined" != typeof window) {
-        var vendors = [ "ms", "moz", "webkit", "o" ], isOpera = !!window.opera || navigator.userAgent.indexOf(" OPR/") >= 0;
-        Object.prototype.toString.call(window.HTMLElement).indexOf("Constructor") > 0, !!window.chrome && !isOpera;
-        for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) window.requestAnimationFrame = window[vendors[x] + "RequestAnimationFrame"], 
+        for (var vendors = [ "ms", "moz", "webkit", "o" ], isOpera = !!window.opera || navigator.userAgent.indexOf(" OPR/") >= 0, x = (Object.prototype.toString.call(window.HTMLElement).indexOf("Constructor") > 0, 
+        !!window.chrome && !isOpera, 0); x < vendors.length && !window.requestAnimationFrame; ++x) window.requestAnimationFrame = window[vendors[x] + "RequestAnimationFrame"], 
         window.cancelAnimationFrame = window[vendors[x] + "CancelAnimationFrame"] || window[vendors[x] + "CancelRequestAnimationFrame"];
         window.requestAnimationFrame || (window.requestAnimationFrame = timeoutFrame, window.cancelAnimationFrame = cancelTimeoutFrame), 
         Newton.frame = window.requestAnimationFrame.bind(window), Newton.cancelFrame = window.cancelAnimationFrame.bind(window);
@@ -212,8 +208,7 @@
     function Material(options) {
         return this instanceof Material ? (options = options || {}, this.weight = options.weight || 1, 
         this.restitution = options.restitution || 1, this.friction = options.friction || 0, 
-        this.maxVelocity = options.maxVelocity || 100, this.maxVelocitySquared = this.maxVelocity * this.maxVelocity, 
-        void 0) : new Material(options);
+        this.maxVelocity = options.maxVelocity || 100, void (this.maxVelocitySquared = this.maxVelocity * this.maxVelocity)) : new Material(options);
     }
     Material.prototype.setMaxVelocity = function(v) {
         return this.maxVelocity = v, this.maxVelocitySquared = v * v, this;
@@ -225,7 +220,7 @@
         this.lastValidPosition = this.position.clone(), this.velocity = new Newton.Vector(0, 0), 
         this.acceleration = new Newton.Vector(0, 0), this.material = material || Newton.Material.simple, 
         this.size = size || 1, this.randomDrag = 0, this.pinned = !1, this.colliding = !1, 
-        this.isDestroyed = !1, this.layer = void 0, void 0) : new Particle(x, y, size, material);
+        this.isDestroyed = !1, void (this.layer = void 0)) : new Particle(x, y, size, material);
     }
     Particle.randomness = 25, Particle.prototype.integrate = function(time) {
         if (!this.pinned) {
@@ -294,8 +289,7 @@
         this.lastTime = 0, this.running = !1, this.fps = 0, this.frames = 0, this.countTime = 0, 
         this.countInterval = 250, this.accumulator = 0, this.simulationStep = 1e3 / (integrationFps || 60), 
         this.iterations = iterations || 3, this.startTime = 0, this.layers = {}, this.particles = [], 
-        this.edges = [], this.forces = [], this.constraints = [], this.collisionParticles = [], 
-        void 0) : new Simulator(callback, renderers, integrationFps, iterations);
+        this.edges = [], this.forces = [], this.constraints = [], void (this.collisionParticles = [])) : new Simulator(callback, renderers, integrationFps, iterations);
     }
     Array.isArray || (Array.isArray = function(vArg) {
         return "[object Array]" === Object.prototype.toString.call(vArg);
@@ -310,7 +304,7 @@
             for (this.lastTime = time, step > 100 && (step = 0), this.accumulator += step; this.accumulator >= this.simulationStep; ) this.simulate(this.simulationStep, time - this.startTime), 
             this.accumulator -= this.simulationStep;
             for (var i = 0; i < this.renderers.length; i++) this.renderers[i](step, this);
-            this.frames++, time >= this.countTime && (this.fps = (1e3 * (this.frames / (this.countInterval + time - this.countTime))).toFixed(0), 
+            this.frames++, time >= this.countTime && (this.fps = (this.frames / (this.countInterval + time - this.countTime) * 1e3).toFixed(0), 
             this.frames = 0, this.countTime = time + this.countInterval), Newton.frame(this.step);
         }
     }, Simulator.prototype.simulate = function(time, totalTime) {
@@ -423,7 +417,7 @@
     function LinearGravity(angle, strength, falloff) {
         return this instanceof LinearGravity ? (this.angle = angle, this.strength = strength, 
         this.vector = new Newton.Vector(0, strength).rotateBy(angle), this.simulator = void 0, 
-        this.layer = void 0, void 0) : new LinearGravity(angle, strength, falloff);
+        void (this.layer = void 0)) : new LinearGravity(angle, strength, falloff);
     }
     LinearGravity.prototype.addTo = function(simulator, layer) {
         simulator.forces.push(this), this.simulator = simulator, this.layer = layer;
@@ -438,7 +432,7 @@
     "use strict";
     function RadialGravity(x, y, strength, falloff) {
         return this instanceof RadialGravity ? (this.x = x, this.y = y, this.strength = strength, 
-        this.simulator = void 0, this.layer = void 0, void 0) : new RadialGravity(x, y, strength, falloff);
+        this.simulator = void 0, void (this.layer = void 0)) : new RadialGravity(x, y, strength, falloff);
     }
     RadialGravity.prototype.addTo = function(simulator, layer) {
         simulator.forces.push(this), this.simulator = simulator, this.layer = layer;
@@ -452,7 +446,7 @@
 }("undefined" == typeof exports ? this.Newton = this.Newton || {} : exports), function(Newton) {
     "use strict";
     function Rectangle(left, top, right, bottom) {
-        return this instanceof Rectangle ? (this.set.apply(this, arguments), void 0) : new Rectangle(left, top, right, bottom);
+        return this instanceof Rectangle ? void this.set.apply(this, arguments) : new Rectangle(left, top, right, bottom);
     }
     Rectangle.fromVectors = function(v1, v2) {
         return new Rectangle(v1.x, v1.y, v2.x, v2.y);
@@ -476,7 +470,7 @@
 }("undefined" == typeof exports ? this.Newton = this.Newton || {} : exports), function(Newton) {
     "use strict";
     function Vector(x, y) {
-        return this instanceof Vector ? (this.x = x, this.y = y, void 0) : new Vector(x, y);
+        return this instanceof Vector ? (this.x = x, void (this.y = y)) : new Vector(x, y);
     }
     Vector._pool = [], Vector.pool = function(size) {
         if ("undefined" == typeof size) return Vector._pool.length;
@@ -555,7 +549,7 @@
             fill: "#ffffff",
             font: "10pt Helvetica"
         }), this.stage.addChild(this.infoText), this.graphics = new PIXI.Graphics(), this.stage.addChild(this.graphics), 
-        this.callback = this.callback.bind(this), void 0) : new PixiRenderer(el, width, height);
+        void (this.callback = this.callback.bind(this))) : new PixiRenderer(el, width, height);
     }
     PixiRenderer.prototype = {
         callback: function(time, sim) {
@@ -574,14 +568,14 @@
             for (var i = 0, ilen = forces.length; ilen > i; i++) {
                 var force = forces[i];
                 force instanceof Newton.RadialGravity && (this.graphics.beginFill(16777215, .2), 
-                this.graphics.drawCircle(force.x, force.y, .5 * force.strength * force.strength), 
+                this.graphics.drawCircle(force.x, force.y, force.strength * force.strength * .5), 
                 this.graphics.endFill());
             }
         },
         drawParticles: function(particles) {
             for (var particle, pos, last, mass, brightness, j = 0, jlen = particles.length; jlen > j; j++) particle = particles[j], 
             pos = particle.position, last = particle.lastValidPosition, mass = particle.getMass(), 
-            brightness = ~~(128 * ((mass - 1) / 5)), particle.colliding ? this.graphics.lineStyle(mass, rgbToHex(255, 255, 100), 1) : this.graphics.lineStyle(mass, rgbToHex(255, 28 + brightness, 108 + brightness), 1), 
+            brightness = ~~((mass - 1) / 5 * 128), particle.colliding ? this.graphics.lineStyle(mass, rgbToHex(255, 255, 100), 1) : this.graphics.lineStyle(mass, rgbToHex(255, 28 + brightness, 108 + brightness), 1), 
             this.graphics.moveTo(last.x - 1, last.y), this.graphics.lineTo(pos.x + 1, pos.y);
             return particles.length;
         },
@@ -596,7 +590,7 @@
     "use strict";
     function Renderer(el) {
         return this instanceof Renderer ? (this.ctx = el.getContext("2d"), this.width = el.width, 
-        this.height = el.height, this.callback = this.callback.bind(this), void 0) : new Renderer(el);
+        this.height = el.height, void (this.callback = this.callback.bind(this))) : new Renderer(el);
     }
     Renderer.prototype = {
         callback: function(time, sim) {
@@ -617,7 +611,7 @@
             ctx.save(), ctx.lineWidth = 2, ctx.strokeStyle = "rgba(255, 255, 255, 0.25)", ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
             for (var i = 0, ilen = forces.length; ilen > i; i++) {
                 var force = forces[i];
-                force instanceof Newton.RadialGravity && (ctx.beginPath(), ctx.arc(force.x, force.y, .5 * force.strength * force.strength, 0, 2 * Math.PI, !1), 
+                force instanceof Newton.RadialGravity && (ctx.beginPath(), ctx.arc(force.x, force.y, force.strength * force.strength * .5, 0, 2 * Math.PI, !1), 
                 ctx.fill());
             }
             ctx.restore();
@@ -702,8 +696,7 @@
         this.sArray = new Float32Array(GLRenderer.MAX_PARTICLES), this.callback = this.callback.bind(this), 
         this.gl.viewport(0, 0, this.width, this.height), this.viewportArray = new Float32Array([ this.width, this.height ]), 
         this.initShaders(), this.initBuffers(), this.particleTexture = createCircleTexture(this.gl), 
-        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE), this.gl.enable(this.gl.BLEND), 
-        void 0) : new GLRenderer(el);
+        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE), void this.gl.enable(this.gl.BLEND)) : new GLRenderer(el);
     }
     var POINT_VS = [ "uniform vec2 viewport;", "attribute vec3 position;", "attribute float size;", "void main() {", "vec2 scaled = ((position.xy / viewport) * 2.0) - 1.0;", "vec2 flipped = vec2(scaled.x, -scaled.y);", "gl_Position = vec4(flipped, 0, 1);", "gl_PointSize = size + 1.0;", "}" ].join("\n"), LINE_VS = [ "uniform vec2 viewport;", "attribute vec3 position;", "void main() {", "vec2 scaled = ((position.xy / viewport) * 2.0) - 1.0;", "vec2 flipped = vec2(scaled.x, -scaled.y);", "gl_Position = vec4(flipped, 0, 1);", "}" ].join("\n"), PARTICLE_FS = [ "precision mediump float;", "uniform sampler2D texture;", "void main() {", "gl_FragColor = texture2D(texture, gl_PointCoord);", "}" ].join("\n"), CONSTRAINT_FS = [ "void main() {", "gl_FragColor = vec4(0.0, 0.5, 1.0, 1.0);", "}" ].join("\n"), EDGE_FS = [ "void main() {", "gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);", "}" ].join("\n");
     GLRenderer.MAX_PARTICLES = 1e4, GLRenderer.prototype = {
@@ -743,7 +736,7 @@
             ctx.save(), ctx.lineWidth = 2, ctx.strokeStyle = "rgba(255, 255, 255, 0.25)", ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
             for (var i = 0, ilen = forces.length; ilen > i; i++) {
                 var force = forces[i];
-                force instanceof Newton.RadialGravity && (ctx.beginPath(), ctx.arc(force.x, force.y, .5 * force.strength * force.strength, 0, 2 * Math.PI, !1), 
+                force instanceof Newton.RadialGravity && (ctx.beginPath(), ctx.arc(force.x, force.y, force.strength * force.strength * .5, 0, 2 * Math.PI, !1), 
                 ctx.fill());
             }
             ctx.restore();
